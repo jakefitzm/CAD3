@@ -70,5 +70,6 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
-
+#gems added
+gem 'httparty'
 gem "devise", "~> 4.9"
