@@ -1,6 +1,10 @@
 class BookingsController < ApplicationController
-  before_action :set_booking, only: %i[ show edit update destroy ]
-
+  #original: before_action :set_booking, only: %i[ show edit update destroy ]
+  before_action :set_booking, only: %i[ show ] #only show bookings before signing in
+  before_action :user_signed_in?, only:[:edit, :create, :update]
+  #before_action :authenticate_user!
+  before_action :admin?, only: [:destroy]
+  
   # GET /bookings or /bookings.json
   def index
     @bookings = Booking.all
@@ -21,8 +25,20 @@ class BookingsController < ApplicationController
 
   # POST /bookings or /bookings.json
   def create
-    @booking = Booking.new(booking_params)
+    #@booking = Booking.new(booking_params)
+    @booking = Booking.new()
+    @booking.name = params [:booking][:name]
+    @booking.date = params [:booking][:date]
+    @booking.time = params [:booking][:time]
+    @booking.size = params [:booking][:size]
+    @booking.note = params [:booking][:note]
 
+    checkedBooking = BasicBooking.new(booking.size)
+
+    checkedBooking = DecoratedBooking.new(checkedBooking)
+
+    @booking.note = @booking.note + " " + checkedBooking.size
+    
     respond_to do |format|
       if @booking.save
         format.html { redirect_to booking_url(@booking), notice: "Booking was successfully created." }
